@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .question {
+            margin-bottom: 40px;
+        }
+        .feedback {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px;
+            cursor: pointer;
+        }
+        #score {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        .question p {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Quiz</h1>
+    <div id="quiz"></div>
+    <div>
+        <button id="back" style="display:none;">Back</button>
+        <button id="next">Next</button>
+        <button id="submit" style="display:none;">Submit Quiz</button>
+    </div>
+    <div id="score"></div>
+
+    <script>
+        const questions = [
+            {
+                question: "The language learning activities that address students' Bodily/Kinesthetic Intelligence are:",
+                options: [
+                    "Memorizing vocabulary lists and definitions.",
+                    "Engaging in group discussions and debates.",
+                    "Field trips, mime, and hands-on activities.",
+                    "Listening to lectures on language rules."
+                ],
+                correct: 2
+            },
+            {
+                question: "Which of the following statements represents Carl Rogers's view of learning?",
+                options: [
+                    "Teachers should become facilitators of learning through establishing interpersonal relationships with learners.",
+                    "Teachers should focus on rote memorization to ensure comprehension.",
+                    "Learners should memorize and recite grammar rules verbatim.",
+                    "Teachers should adhere strictly to prescribed methodologies without flexibility."
+                ],
+                correct: 0
+            },
+            {
+                question: "Which of the following statements is TRUE about grammaring?",
+                options: [
+                    "It is the memorization of grammar rules for application in exams.",
+                    "It is the ability to use grammar structures accurately, meaningfully, and appropriately.",
+                    "It emphasizes grammar learning solely as mastering a body of rules.",
+                    "It involves analyzing grammar structures without using them in real-life contexts."
+                ],
+                correct: 1
+            },
+            {
+                question: "Based on Gardner's proposal, the three minds that deal with intellectual development are the:",
+                options: [
+                    "Critical, Logical, and Analytical Minds.",
+                    "Respectful, Creating, and Reflective Minds.",
+                    "Practical, Creative, and Evaluative Minds.",
+                    "Disciplinary, Synthesizing, and Creating Minds."
+                ],
+                correct: 3
+            },
+            {
+                question: "Which of the following is NOT a principle of the Silent Way?",
+                options: [
+                    "Learning is a process that learners should initiate by themselves.",
+                    "Teachers should consider not only their students' intellect but also their feelings.",
+                    "Teaching should serve the learning process rather than dominate it.",
+                    "Teaching should be subordinated to learning."
+                ],
+                correct: 1
+            },
+            {
+                question: "Which of the following is TRUE about the principle of automaticity in language learning?",
+                options: [
+                    "There is an emphasis on subconscious absorption of language through meaningful use.",
+                    "There is little focus on the purposes to which language is applied.",
+                    "There is a deliberate emphasis on memorizing discrete language forms.",
+                    "There is a tendency to avoid the subconscious processes of learning."
+                ],
+                correct: 0
+            },
+            {
+                question: "All the following objectives set before any writing task serve to motivate students EXCEPT:",
+                options: [
+                    "Making them interested in the topic.",
+                    "Giving them some reasons for writing.",
+                    "Keeping the evaluation system hidden to them.",
+                    "Providing them with information needed to write about the topic."
+                ],
+                correct: 2
+            },
+            {
+                question: "Research shows that people who are predominantly:",
+                options: [
+                    "Impulsive tend to be more socially oriented, while reflective people are more independent.",
+                    "Reflective tend to be more socially oriented, while impulsive people are more independent.",
+                    "Field-dependent tend to be more competitive, while field-independent people are more perceptive of others' thoughts.",
+                    "Field-independent tend to be more competitive, while field-dependent people are more perceptive of others' thoughts and feelings."
+                ],
+                correct: 3
+            },
+            {
+                question: "Miscue analysis is a technique of:",
+                options: [
+                    "Identifying reading problems through documenting deviations from the text.",
+                    "Measuring reading speed through analysis of mispronounced words.",
+                    "Identifying grammatical errors in oral communication.",
+                    "Evaluating comprehension through summaries of a passage."
+                ],
+                correct: 0
+            },
+            {
+                question: "What kind of speaking activity is designed to practice a phonological or grammatical aspect of language?",
+                options: [
+                    "Transactional.",
+                    "Intensive.",
+                    "Responsive.",
+                    "Imitative."
+                ],
+                correct: 1
+            }
+        ];
+
+        const quizContainer = document.getElementById('quiz');
+        const backButton = document.getElementById('back');
+        const nextButton = document.getElementById('next');
+        const submitButton = document.getElementById('submit');
+        const scoreContainer = document.getElementById('score');
+
+        let currentPage = 0;
+        const questionsPerPage = 5;
+        let userAnswers = Array(questions.length).fill(null);
+
+        function renderPage() {
+            quizContainer.innerHTML = '';
+            const start = currentPage * questionsPerPage;
+            const end = Math.min(start + questionsPerPage, questions.length);
+
+            for (let i = start; i < end; i++) {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+
+                const questionText = document.createElement('p');
+                questionText.textContent = `${i + 1}. ${questions[i].question}`;
+                questionDiv.appendChild(questionText);
+
+                questions[i].options.forEach((option, index) => {
+                    const optionLabel = document.createElement('label');
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question-${i}`;
+                    optionInput.value = index;
+                    optionInput.checked = userAnswers[i] === index;
+                    optionInput.addEventListener('change', () => {
+                        userAnswers[i] = index;
+                    });
+                    optionLabel.appendChild(optionInput);
+                    optionLabel.appendChild(document.createTextNode(option));
+                    questionDiv.appendChild(optionLabel);
+                });
+
+                quizContainer.appendChild(questionDiv);
+            }
+
+            backButton.style.display = currentPage === 0 ? 'none' : 'inline';
+            nextButton.style.display = currentPage === Math.ceil(questions.length / questionsPerPage) - 1 ? 'none' : 'inline';
+            submitButton.style.display = currentPage === Math.ceil(questions.length / questionsPerPage) - 1 ? 'inline' : 'none';
+        }
+
+        backButton.addEventListener('click', () => {
+            if (currentPage > 0) {
+                currentPage--;
+                renderPage();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentPage < Math.ceil(questions.length / questionsPerPage) - 1) {
+                currentPage++;
+                renderPage();
+            }
+        });
+
+        submitButton.addEventListener('click', () => {
+            let score = 0;
+            quizContainer.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const resultDiv = document.createElement('div');
+                resultDiv.classList.add('question');
+
+                const questionText = document.createElement('p');
+                questionText.textContent = `${index + 1}. ${q.question}`;
+                resultDiv.appendChild(questionText);
+
+                const correctAnswer = document.createElement('p');
+                correctAnswer.textContent = `Correct Answer: ${q.options[q.correct]}`;
+                correctAnswer.style.color = 'green';
+                resultDiv.appendChild(correctAnswer);
+
+                if (userAnswers[index] === q.correct) {
+                    score++;
+                } else {
+                    const userAnswer = document.createElement('p');
+                    userAnswer.textContent = `Your Answer: ${q.options[userAnswers[index]] || 'No Answer'}`;
+                    userAnswer.style.color = 'red';
+                    resultDiv.appendChild(userAnswer);
+                }
+
+                quizContainer.appendChild(resultDiv);
+            });
+
+            const percentage = ((score / questions.length) * 100).toFixed(2);
+            scoreContainer.textContent = `Your Score: ${score} / ${questions.length} (${percentage}%)`;
+        });
+
+        renderPage();
+    </script>
+</body>
+</html>
